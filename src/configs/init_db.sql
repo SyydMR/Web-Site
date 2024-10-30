@@ -1,0 +1,11 @@
+# psql -U postgres
+CREATE DATABASE my_db;
+# \q
+
+# psql -U postgres -d my_db
+
+CREATE USER admin WITH PASSWORD '183461';
+
+GRANT ALL PRIVILEGES ON DATABASE my_db TO admin;
+GRANT ALL PRIVILEGES ON SCHEMA public TO admin;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO admin;

@@ -1,32 +1,17 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/SyydMR/Web-Site/src/models"
 	"github.com/SyydMR/Web-Site/src/utils"
-
 	"github.com/gin-gonic/gin"
-
 )
 
-func getUserId(c *gin.Context) (uint, error) {
-    tokenString := c.GetHeader("Authorization")
-    if tokenString == "" {
-        return 0, fmt.Errorf("authorization token not provided")
-    }
-    userID, err := utils.VerifyJWT(tokenString)
-    if err != nil {
-        return 0, fmt.Errorf("invalid token: %v", err)
-    }
-    return userID, nil
-}
-
 func GetAllTasks(c *gin.Context) {
-	id, err := getUserId(c)
+	id, err := utils.GetUserId(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -39,7 +24,7 @@ func GetAllTasks(c *gin.Context) {
 }
 
 func AddTask(c *gin.Context) {
-	id, err := getUserId(c)
+	id, err := utils.GetUserId(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -71,7 +56,7 @@ func AddTask(c *gin.Context) {
 }
 
 func RemoveTask(c *gin.Context) {
-	taskID := c.Param("TaskId")
+	taskID := c.Param("taskID")
 	ID, err := strconv.ParseUint(taskID, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
@@ -84,7 +69,7 @@ func RemoveTask(c *gin.Context) {
 		return
 	}
 
-	id, err := getUserId(c)
+	id, err := utils.GetUserId(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -105,7 +90,7 @@ func UpdateTask(c *gin.Context) {
 		return
 	}
 
-	taskID := c.Param("TaskId")
+	taskID := c.Param("taskID")
 	ID, err := strconv.ParseUint(taskID, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
@@ -126,7 +111,7 @@ func UpdateTask(c *gin.Context) {
 
 	db.Save(&taskDetails)
 
-	id, err := getUserId(c)
+	id, err := utils.GetUserId(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return

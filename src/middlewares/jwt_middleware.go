@@ -1,11 +1,10 @@
 package middlewares
 
-
 import (
 	"context"
-	"net/http"
 	"github.com/SyydMR/Web-Site/src/utils"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func AuthMiddleware() gin.HandlerFunc {

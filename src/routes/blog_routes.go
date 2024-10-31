@@ -13,9 +13,9 @@ func addBlogRoute(r *gin.Engine) {
 
 		blogRoutes.GET("/:postId", handlers.HandlerGetPostByID)
 
-		blogRoutes.POST("/create-post", handlers.HandlerCreateEmptyPost, middlewares.AuthMiddleware()) // redirect to /:postId/update
+		blogRoutes.POST("/create-post", handlers.HandlerCreateEmptyPost, middlewares.AuthMiddleware())
 
-		updateRoutes := blogRoutes.Group("/:postId/update", middlewares.AuthMiddleware())
+		updateRoutes := blogRoutes.Group("/:postId/update", middlewares.AuthMiddleware(), middlewares.IDPostValidateMiddleware())
 		{
 			updateRoutes.GET("/", handlers.HandlerGetAllContent)
 
@@ -29,6 +29,6 @@ func addBlogRoute(r *gin.Engine) {
 		blogRoutes.GET("/user/all-posts", handlers.HandlerGetUserAllPosts, middlewares.AuthMiddleware())
 
 		// blogRoutes.PUT("/:postId", handlers.UpdatePost)
-		blogRoutes.DELETE("/user/:postId/delete-post", handlers.HandlerDeletePost, middlewares.AuthMiddleware())
+		blogRoutes.DELETE("/user/:postId/delete-post", handlers.HandlerDeletePost, middlewares.AuthMiddleware(), middlewares.IDPostValidateMiddleware())
 	}
 }

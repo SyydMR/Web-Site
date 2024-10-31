@@ -13,6 +13,5 @@ func addTaskRoute(r *gin.Engine) {
 		taskRoutes.POST("", handlers.AddTask)
 		taskRoutes.PUT("/:TaskId", handlers.UpdateTask)
 		taskRoutes.DELETE("/:TaskId", handlers.RemoveTask)
-		taskRoutes.POST("/:TaskId", handlers.CheckTask)
 	}
 }

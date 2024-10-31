@@ -13,7 +13,7 @@ type Task struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Status      string `json:"status" gorm:"default:'To Do'"`
-	UserID      int64  `json:"user_id"`
+	UserID      uint  `json:"user_id"`
 }
 
 func (u *User) AddTask(task *Task) error {
@@ -21,7 +21,7 @@ func (u *User) AddTask(task *Task) error {
 		return errors.New("task cannot be nil")
 	}
 
-	task.UserID = int64(u.ID)
+	task.UserID = uint(u.ID)
 	if err := db.Save(task).Error; err != nil {
 		log.Printf("Error saving task for user %d: %v", u.ID, err)
 		return fmt.Errorf("error saving task for user %d: %v", u.ID, err)
@@ -30,7 +30,7 @@ func (u *User) AddTask(task *Task) error {
 	return nil
 }
 
-func GetUserAllTask(id int64) ([]Task, error) {
+func GetUserAllTask(id uint) ([]Task, error) {
 	var tasks []Task
 	if err := db.Where("user_id = ?", id).Find(&tasks).Error; err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func GetAllTask() ([]Task, error) {
 	}
 	return tasks, nil
 }
-func GetTaskById(id int64) (*Task, error) {
+func GetTaskById(id uint) (*Task, error) {
 	var getTask Task
 	if err := db.Where("ID=?", id).First(&getTask).Error; err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func GetTaskById(id int64) (*Task, error) {
 	return &getTask, nil
 }
 
-func RemoveTask(ID int64) error {
+func RemoveTask(ID uint) error {
 	var task Task
 	if err := db.Where("ID=?", ID).Delete(&task).Error; err != nil {
 		return err

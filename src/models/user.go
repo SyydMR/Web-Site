@@ -19,6 +19,7 @@ type User struct {
 	Username string `json:"username" gorm:"unique"`
 	Password string `json:"password"`
 	Tasks    []Task `gorm:"foreignKey:UserID" json:"tasks"`
+	Posts    []Post `gorm:"foreignKey:AuthorID" json:"posts"`
 }
 
 
@@ -33,7 +34,7 @@ func GetAllUser() ([]User, error) {
 
 
 
-func GetUserById(id int64) (*User, error) {
+func GetUserById(id uint) (*User, error) {
     var getUser User
     if err := db.Preload("Tasks").Where("ID = ?", id).First(&getUser).Error; err != nil {
         return nil, err
@@ -69,7 +70,7 @@ func (u *User) Login(plainPassword string) (string, error) {
 	if !utils.CheckPasswordHash(plainPassword, user.Password) {
 		return "", errors.New("incorrect password")
 	}
-	token, err := utils.GenerateJWT(int64(user.ID))
+	token, err := utils.GenerateJWT(uint(user.ID))
 	if err != nil {
 		return "", err
 	}

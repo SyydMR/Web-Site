@@ -12,7 +12,7 @@ import (
 var jwtKey []byte
 
 type Claims struct {
-	ID int64 `json:"id"`
+	ID uint `json:"id"`
 	jwt.RegisteredClaims
 }
 
@@ -32,7 +32,7 @@ func init() {
 	initConfig()
 }
 
-func GenerateJWT(id int64) (string, error) {
+func GenerateJWT(id uint) (string, error) {
 	expirationTime := time.Now().Add(3 * time.Hour)
 	claims := &Claims{
 		ID: id,
@@ -44,7 +44,7 @@ func GenerateJWT(id int64) (string, error) {
 	return token.SignedString(jwtKey)
 }
 
-func VerifyJWT(tokenString string) (int64, error) {
+func VerifyJWT(tokenString string) (uint, error) {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil

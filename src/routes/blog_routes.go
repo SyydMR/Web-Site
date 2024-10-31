@@ -1,17 +1,34 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/SyydMR/Web-Site/src/handlers"
+	"github.com/SyydMR/Web-Site/src/middlewares"
+	"github.com/gin-gonic/gin"
 )
 
 func addBlogRoute(r *gin.Engine) {
-	blogRoutes := r.Group("/blog")
+	blogRoutes := r.Group("/blogs")
 	{
-		blogRoutes.GET("/", handlers.GetAllPosts)
-		blogRoutes.GET("/:postId", handlers.GetPostByID)
-		blogRoutes.POST("/", handlers.CreatePost)
-		blogRoutes.PUT("/:postId", handlers.UpdatePost)
-		blogRoutes.DELETE("/:postId", handlers.DeletePost)
+		blogRoutes.GET("/all-posts", handlers.HandlerGetAllPosts)
+
+		blogRoutes.GET("/:postId", handlers.HandlerGetPostByID)
+
+		blogRoutes.POST("/create-post", handlers.HandlerCreateEmptyPost, middlewares.AuthMiddleware()) // redirect to /:postId/update
+
+		updateRoutes := blogRoutes.Group("/:postId/update", middlewares.AuthMiddleware())
+		{
+			updateRoutes.GET("/", handlers.HandlerAllContent)
+
+			updateRoutes.POST("/create-content", handlers.HandlerCreateContent)
+			updateRoutes.DELETE("/remove-content", handlers.HandlerRemoveContent)
+
+		}
+
+
+
+		blogRoutes.GET("/user/all-posts", handlers.HandlerGetUserAllPosts, middlewares.AuthMiddleware())
+
+		// blogRoutes.PUT("/:postId", handlers.UpdatePost)
+		blogRoutes.DELETE("/user/:postId/delete-post", handlers.HandlerDeletePost, middlewares.AuthMiddleware())
 	}
 }

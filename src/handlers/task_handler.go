@@ -13,7 +13,7 @@ import (
 
 )
 
-func getUserId(c *gin.Context) (int64, error) {
+func getUserId(c *gin.Context) (uint, error) {
     tokenString := c.GetHeader("Authorization")
     if tokenString == "" {
         return 0, fmt.Errorf("authorization token not provided")
@@ -24,13 +24,14 @@ func getUserId(c *gin.Context) (int64, error) {
     }
     return userID, nil
 }
+
 func GetAllTasks(c *gin.Context) {
 	Id, err := getUserId(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	Id = int64(Id)
+	Id = uint(Id)
 
 	newTasks, err := models.GetUserAllTask(Id)
 
@@ -50,7 +51,7 @@ func AddTask(c *gin.Context) {
 		return
 	}
 
-	Id = int64(Id)
+	Id = uint(Id)
 	user, err := models.GetUserById(Id)
 
 	newTask.UserID = Id
@@ -71,51 +72,17 @@ func AddTask(c *gin.Context) {
 
 func RemoveTask(c *gin.Context) {
 	taskID := c.Param("TaskId")
-	ID, err := strconv.ParseInt(taskID, 10, 64)
+	ID, err := strconv.ParseUint(taskID, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
 		return
 	}
-	err = models.RemoveTask(ID)
+	err = models.RemoveTask(uint(ID))
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove task"})
 		return
 	}
-
-	Id, err := getUserId(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
-	}
-
-	newTasks, err := models.GetUserAllTask(Id)
-	if err != nil {
-		log.Printf("Error fetching tasks for user %d: %v", Id, err)
-		return
-	}
-	c.JSON(http.StatusOK, newTasks)
-}
-
-func CheckTask(c *gin.Context) {
-	taskID := c.Param("TaskId")
-	ID, err := strconv.ParseInt(taskID, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
-		return
-	}
-
-	itemDetails, _ := models.GetTaskById(ID)
-
-	if itemDetails.Status == "Done" {
-		itemDetails.Status = "To Do"
-	} else {
-		itemDetails.Status = "Done"
-	}
-
-	db.Save(&itemDetails)
-
-
 
 	Id, err := getUserId(c)
 	if err != nil {
@@ -139,13 +106,13 @@ func UpdateTask(c *gin.Context) {
 	}
 
 	taskID := c.Param("TaskId")
-	ID, err := strconv.ParseInt(taskID, 10, 64)
+	ID, err := strconv.ParseUint(taskID, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
 		return
 	}
 
-	taskDetails, _ := models.GetTaskById(ID)
+	taskDetails, _ := models.GetTaskById(uint(ID))
 
 	if updateTask.Title != "" {
 		taskDetails.Title = updateTask.Title

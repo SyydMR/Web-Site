@@ -20,13 +20,13 @@ func GetAllUsers(c *gin.Context) {
 func GetUserByIDHandler(c *gin.Context) {
 	userId := c.Param("userId")
 
-	ID, err := strconv.ParseInt(userId, 10, 64)
+	ID, err := strconv.ParseUint(userId, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
 	}
 
-	newUser, err := models.GetUserById(ID)
+	newUser, err := models.GetUserById(uint(ID))
 	if err != nil {
 		log.Println("Error retrieving user by ID:", err)
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})

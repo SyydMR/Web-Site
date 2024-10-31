@@ -47,12 +47,7 @@ func AddTask(c *gin.Context) {
 		return
 	}
 
-	userTasks, err := models.GetUserAllTask(id)
-	if err != nil {
-		log.Printf("Error fetching tasks for user %d: %v", id, err)
-		return
-	}
-	c.JSON(http.StatusOK, userTasks)
+	c.JSON(http.StatusOK,  gin.H{"message": "success"})
 }
 
 func RemoveTask(c *gin.Context) {
@@ -69,18 +64,8 @@ func RemoveTask(c *gin.Context) {
 		return
 	}
 
-	id, err := utils.GetUserId(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
-	}
 
-	newTasks, err := models.GetUserAllTask(id)
-	if err != nil {
-		log.Printf("Error fetching tasks for user %d: %v", id, err)
-		return
-	}
-	c.JSON(http.StatusOK, newTasks)
+	c.JSON(http.StatusOK,  gin.H{"message": "success"})
 }
 
 func UpdateTask(c *gin.Context) {
@@ -105,7 +90,7 @@ func UpdateTask(c *gin.Context) {
 	if updateTask.Description != "" {
 		taskDetails.Description = updateTask.Description
 	}
-	if updateTask.Status != "" {
+	if updateTask.Status {
 		taskDetails.Status = updateTask.Status
 	}
 
@@ -123,4 +108,28 @@ func UpdateTask(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, newTasks)
+}
+
+
+
+func CheckTask(c *gin.Context) {
+	taskID := c.Param("taskId")
+	ID, err := strconv.ParseUint(taskID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid task ID"})
+		return
+	}
+
+	itemDetails, _ := models.GetTaskById(uint(ID))
+
+	if itemDetails.Status {
+		itemDetails.Status = false
+	} else {
+		itemDetails.Status = true
+	}
+
+	db.Save(&itemDetails)
+
+
+	c.JSON(http.StatusOK,  gin.H{"message": "success"})
 }

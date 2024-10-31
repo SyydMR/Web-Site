@@ -10,9 +10,9 @@ import (
 
 type Task struct {
 	gorm.Model
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Status      string `json:"status" gorm:"default:'To Do'"`
+	Title       string `json:"HeaderForm"`
+	Description string `json:"CaptionForm"`
+	Status      bool `json:"bool" gorm:"default:false"`
 	UserID      uint  `json:"user_id"`
 }
 
@@ -31,11 +31,11 @@ func (u *User) AddTask(task *Task) error {
 }
 
 func GetUserAllTask(id uint) ([]Task, error) {
-	var tasks []Task
-	if err := db.Where("user_id = ?", id).Find(&tasks).Error; err != nil {
-		return nil, err
-	}
-	return tasks, nil
+    var tasks []Task
+    if err := db.Where("user_id = ?", id).Order("ID DESC").Find(&tasks).Error; err != nil {
+        return nil, err
+    }
+    return tasks, nil
 }
 
 func GetAllTask() ([]Task, error) {

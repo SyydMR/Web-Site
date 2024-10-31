@@ -13,5 +13,5 @@ import (
 func main() {
     configs.Init()
     router := routes.GetRoute()
-    router.Run(":8080")
+    router.Run("192.168.10.1:8080")
 }

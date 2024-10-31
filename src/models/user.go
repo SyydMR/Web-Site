@@ -22,8 +22,6 @@ type User struct {
 	Posts    []Post `gorm:"foreignKey:AuthorID" json:"posts"`
 }
 
-
-
 func GetAllUser() ([]User, error) {
 	var users []User
 	if err := db.Find(&users).Error; err != nil {
@@ -32,16 +30,13 @@ func GetAllUser() ([]User, error) {
 	return users, nil
 }
 
-
-
 func GetUserById(id uint) (*User, error) {
-    var getUser User
-    if err := db.Preload("Tasks").Where("ID = ?", id).First(&getUser).Error; err != nil {
-        return nil, err
-    }
-    return &getUser, nil
+	var getUser User
+	if err := db.Preload("Tasks").Where("ID = ?", id).First(&getUser).Error; err != nil {
+		return nil, err
+	}
+	return &getUser, nil
 }
-
 
 func (u *User) Register() (*User, error) {
 	hashedPassword, err := utils.HashPassword(u.Password)

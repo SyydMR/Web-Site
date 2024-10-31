@@ -22,13 +22,13 @@ func HandlerGetAllPosts (c *gin.Context) {
 
 func HandlerGetPostByID(c *gin.Context) {
 	postID := c.Param("postId")
-	Id, err := strconv.ParseUint(postID, 10, 64)
+	id, err := strconv.ParseUint(postID, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid post ID"})
 		return
 	}
 
-	post, err := models.GetPostById(uint(Id))
+	post, err := models.GetPostById(uint(id))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -37,24 +37,31 @@ func HandlerGetPostByID(c *gin.Context) {
 }
 
 func HandlerCreateEmptyPost(c *gin.Context) {
-	Id, err := getUserId(c)
+	id, err := getUserId(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
-	post, err := models.CreatePost(Id)
+	post := models.Post{
+		AuthorID: id, 
+		Contents: []models.Content{}, 
+		Publish:  false,
+	}
+
+	err = models.CreatePost(&post)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.Redirect(http.StatusSeeOther, "/blogs/"+strconv.FormatInt(int64(post.ID), 10)+"/update")
+	c.Redirect(http.StatusSeeOther, "/blogs/"+strconv.FormatUint(uint64(post.ID), 10)+"/update")
 }
 
 func HandlerGetUserAllPosts (c *gin.Context) {
-	Id, err := getUserId(c)
-	posts, err := models.GetPostsByUserID(Id)
+	id, err := getUserId(c)
+	posts, err := models.GetPostsByUserID(id)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

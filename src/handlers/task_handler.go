@@ -26,20 +26,20 @@ func getUserId(c *gin.Context) (uint, error) {
 }
 
 func GetAllTasks(c *gin.Context) {
-	Id, err := getUserId(c)
+	id, err := getUserId(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	Id = uint(Id)
+	id = uint(id)
 
-	newTasks, err := models.GetUserAllTask(Id)
+	newTasks, err := models.GetUserAllTask(id)
 
 	c.JSON(http.StatusOK, newTasks)
 }
 
 func AddTask(c *gin.Context) {
-	Id, err := getUserId(c)
+	id, err := getUserId(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -51,10 +51,10 @@ func AddTask(c *gin.Context) {
 		return
 	}
 
-	Id = uint(Id)
-	user, err := models.GetUserById(Id)
+	id = uint(id)
+	user, err := models.GetUserById(id)
 
-	newTask.UserID = Id
+	newTask.UserID = id
 	err = user.AddTask(&newTask)
 
 	if err != nil {
@@ -62,9 +62,9 @@ func AddTask(c *gin.Context) {
 		return
 	}
 
-	userTasks, err := models.GetUserAllTask(Id)
+	userTasks, err := models.GetUserAllTask(id)
 	if err != nil {
-		log.Printf("Error fetching tasks for user %d: %v", Id, err)
+		log.Printf("Error fetching tasks for user %d: %v", id, err)
 		return
 	}
 	c.JSON(http.StatusOK, userTasks)
@@ -84,15 +84,15 @@ func RemoveTask(c *gin.Context) {
 		return
 	}
 
-	Id, err := getUserId(c)
+	id, err := getUserId(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	newTasks, err := models.GetUserAllTask(Id)
+	newTasks, err := models.GetUserAllTask(id)
 	if err != nil {
-		log.Printf("Error fetching tasks for user %d: %v", Id, err)
+		log.Printf("Error fetching tasks for user %d: %v", id, err)
 		return
 	}
 	c.JSON(http.StatusOK, newTasks)
@@ -126,15 +126,15 @@ func UpdateTask(c *gin.Context) {
 
 	db.Save(&taskDetails)
 
-	Id, err := getUserId(c)
+	id, err := getUserId(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	newTasks, err := models.GetUserAllTask(Id)
+	newTasks, err := models.GetUserAllTask(id)
 	if err != nil {
-		log.Printf("Error fetching tasks for user %d: %v", Id, err)
+		log.Printf("Error fetching tasks for user %d: %v", id, err)
 		return
 	}
 	c.JSON(http.StatusOK, newTasks)

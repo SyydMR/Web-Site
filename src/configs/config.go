@@ -52,7 +52,7 @@ func connectDB() {
 
 func Init() *gorm.DB {
 	connectDB()
-	DB.AutoMigrate(&models.User{}, &models.Task{})
+	DB.AutoMigrate(&models.User{}, &models.Task{}, &models.Content{}, &models.Post{})
 	models.InitDB(DB)
 	handlers.InitDB(DB)
 	return DB

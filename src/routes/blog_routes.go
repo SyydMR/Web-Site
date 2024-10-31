@@ -17,10 +17,10 @@ func addBlogRoute(r *gin.Engine) {
 
 		updateRoutes := blogRoutes.Group("/:postId/update", middlewares.AuthMiddleware())
 		{
-			updateRoutes.GET("/", handlers.HandlerAllContent)
+			updateRoutes.GET("/", handlers.HandlerGetAllContent)
 
 			updateRoutes.POST("/create-content", handlers.HandlerCreateContent)
-			updateRoutes.DELETE("/remove-content", handlers.HandlerRemoveContent)
+			updateRoutes.DELETE("/remove-content/:contentID", handlers.HandlerRemoveContent)
 
 		}
 

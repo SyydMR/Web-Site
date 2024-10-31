@@ -32,18 +32,11 @@ func GetPostById(id uint) (*Post, error) {
 
 
 
-func CreatePost(authorID uint) (*Post, error) {
-	post := Post{
-		AuthorID: authorID, 
-		Contents: []Content{}, 
-		Publish:  false,
-	}
-	
+func CreatePost(post *Post) (error) {
 	if err := db.Create(&post).Error; err != nil {
-		return nil, err
+		return err
 	}
-
-	return &post, nil
+	return nil
 }
 
 

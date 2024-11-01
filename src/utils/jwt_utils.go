@@ -15,6 +15,7 @@ type Claims struct {
 	ID uint `json:"id"`
 	jwt.RegisteredClaims
 }
+var blacklist = make(map[string]bool)
 
 func initConfig() {
 	viper.SetConfigName("config")
@@ -45,21 +46,31 @@ func GenerateJWT(id uint) (string, error) {
 }
 
 func VerifyJWT(tokenString string) (uint, error) {
-	claims := &Claims{}
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
-	})
+    if _, found := blacklist[tokenString]; found {
+        return 0, fmt.Errorf("Token is blacklisted")
+    }
 
-	if err != nil {
-		if err == jwt.ErrSignatureInvalid {
-			return 0, fmt.Errorf("Invalid token signature")
-		}
-		return 0, fmt.Errorf("Could not parse token: %v", err)
-	}
+    claims := &Claims{}
+    token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+        return jwtKey, nil
+    })
 
-	if !token.Valid {
-		return 0, fmt.Errorf("Token is invalid")
-	}
+    if err != nil {
+        if err == jwt.ErrSignatureInvalid {
+            return 0, fmt.Errorf("Invalid token signature")
+        }
+        return 0, fmt.Errorf("Could not parse token: %v", err)
+    }
 
-	return claims.ID, nil
+    if !token.Valid {
+        return 0, fmt.Errorf("Token is invalid")
+    }
+
+    return claims.ID, nil
+}
+
+
+func ExpireToken(tokenString string) error {
+    blacklist[tokenString] = true
+    return nil
 }

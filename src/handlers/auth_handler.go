@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/SyydMR/Web-Site/src/models"
+	"github.com/SyydMR/Web-Site/src/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -48,4 +49,16 @@ func LoginHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"token": token})
+}
+
+func LogoutHandler(c *gin.Context) {
+    tokenString := c.GetHeader("Authorization")
+    if tokenString == "" {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "authorization token not provided"})
+        c.Abort()
+        return
+    }
+
+    utils.ExpireToken(tokenString)
+    c.JSON(http.StatusOK, gin.H{"message": "logout success"})
 }

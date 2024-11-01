@@ -13,6 +13,8 @@ func addUserRoute(r *gin.Engine) {
 		userRoutes.POST("/login", handlers.LoginHandler)
 
 		userRoutes.POST("/register", handlers.RegisterHandler)
+		userRoutes.POST("/logout", handlers.LogoutHandler)
+
 
 		userRoutes.GET("/users/:userId", handlers.GetUserByIDHandler)
 	}

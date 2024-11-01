@@ -18,6 +18,7 @@ type User struct {
 	Name     string `json:"name" gorm:"default:'New User'"`
 	Username string `json:"username" gorm:"unique"`
 	Password string `json:"password"`
+	Email    string `json:"email" gorm:"unique;default:null"`
 	Tasks    []Task `gorm:"foreignKey:UserID" json:"tasks"`
 	Posts    []Post `gorm:"foreignKey:AuthorID" json:"posts"`
 }

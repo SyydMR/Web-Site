@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/SyydMR/Web-Site/src/utils"
 	"gorm.io/gorm"
@@ -16,9 +17,13 @@ func InitDB(database *gorm.DB) {
 type User struct {
 	gorm.Model
 	Name     string `json:"name" gorm:"default:'New User'"`
-	Username string `json:"username" gorm:"unique"`
+	// Username string `json:"username" gorm:"unique"`
+	Username string `json:"username"`
+
 	Password string `json:"password"`
-	Email    string `json:"email" gorm:"unique;default:null"`
+	// Email    string `json:"email" gorm:"unique;default:null"`
+	Email    string `json:"email" gorm:"default:null"`
+
 	Tasks    []Task `gorm:"foreignKey:UserID" json:"tasks"`
 	Posts    []Post `gorm:"foreignKey:AuthorID" json:"posts"`
 }
@@ -72,4 +77,15 @@ func (u *User) Login(plainPassword string) (string, error) {
 	}
 
 	return token, nil
+}
+
+func DeleteUser(int uint) error {
+	return db.Delete(&User{Model: gorm.Model{ID: int}}).Error
+}
+
+func DeleteAllUsers() error {
+    if err := db.Delete(&User{}, "1 = 1").Error; err != nil {
+        return fmt.Errorf("failed to delete users: %w", err)
+    }
+    return nil
 }

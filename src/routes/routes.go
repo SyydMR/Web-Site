@@ -9,6 +9,7 @@ import (
 
 func routeInit() *gin.Engine {
 	router := gin.Default()
+	router.SetTrustedProxies([]string{"192.168.10.1"})
 	router.Use(middlewares.Cors())
 	addUserRoute(router)
 	addTaskRoute(router)

@@ -15,7 +15,6 @@ func routeInit() *gin.Engine {
 	addTaskRoute(router)
 	addBlogRoute(router)
 	// addChatRoomRoute(router)
-
 	return router
 }
 

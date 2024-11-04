@@ -2,12 +2,13 @@ package routes
 
 import (
 	"github.com/SyydMR/Web-Site/src/handlers"
+	"github.com/SyydMR/Web-Site/src/middlewares"
 	// "github.com/SyydMR/Web-Site/src/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
 func addBlogRoute(r *gin.Engine) {
-	blogRoutes := r.Group("/blogs")
+	blogRoutes := r.Group("/blogs", middlewares.RateLimitMiddleware())
 	{
 		blogRoutes.GET("/all-posts", handlers.HandlerGetAllPosts)
 

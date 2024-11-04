@@ -7,7 +7,7 @@ import (
 )
 
 func addTaskRoute(r *gin.Engine) {
-	taskRoutes := r.Group("/tasks", middlewares.AuthMiddleware())
+	taskRoutes := r.Group("/tasks", middlewares.AuthMiddleware(), middlewares.RateLimitMiddleware())
 	{
 		taskRoutes.GET("", handlers.GetAllTasks)
 		taskRoutes.POST("", handlers.AddTask)

@@ -17,13 +17,9 @@ func InitDB(database *gorm.DB) {
 type User struct {
 	gorm.Model
 	Name     string `json:"name" gorm:"default:'New User'"`
-	// Username string `json:"username" gorm:"unique"`
-	Username string `json:"username"`
-
+	Username string `json:"username" gorm:"unique"`
 	Password string `json:"password"`
-	// Email    string `json:"email" gorm:"unique;default:null"`
-	Email    string `json:"email" gorm:"default:null"`
-
+	Email    string `json:"email" gorm:"unique;default:null"`
 	Tasks    []Task `gorm:"foreignKey:UserID" json:"tasks"`
 	Posts    []Post `gorm:"foreignKey:AuthorID" json:"posts"`
 }

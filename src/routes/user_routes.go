@@ -1,12 +1,13 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/SyydMR/Web-Site/src/handlers"
+	"github.com/SyydMR/Web-Site/src/middlewares"
+	"github.com/gin-gonic/gin"
 )
 
 func addUserRoute(r *gin.Engine) {
-	userRoutes := r.Group("/user")
+	userRoutes := r.Group("/user", middlewares.RateLimitMiddleware())
 	{
 		userRoutes.GET("/users", handlers.GetAllUsers)
 		userRoutes.DELETE("/users", handlers.DeleteAllUsers)
